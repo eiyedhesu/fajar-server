@@ -53,6 +53,7 @@ userSchema.path('email').validate(async function (value){
 
     try{
         const count = await this.model('User').count({email: value})
+        console.log('kesatu');
         return !count
 
     }catch(err){
@@ -63,10 +64,11 @@ userSchema.path('email').validate(async function (value){
 
 const HASH_ROUND = 10
 userSchema.pre('save', function(next){
+    console.log('kedua');
     this.password = bcrypt.hashSync(this.password, HASH_ROUND)
-    next(3)
+    next()
  })
 
-userSchema.plugin(AutoIncrement, {inc_field: 'customer_id'})
+userSchema.plugin(AutoIncrement, {inc_field: 'customer_id',disable_hooks: true})
 
 module.exports = model ('User', userSchema)

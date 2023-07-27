@@ -9,6 +9,11 @@ const productRoute = require ('./app/product/routes')
 const categoryRoute = require ('./app/category/routes')
 const tagsRoute = require ('./app/tags/routes')
 const authRoute = require ('./app/auth/routes')
+const delveryAddressRoute = require ('./app/deliveryAdress/routes')
+const cartRoute = require ('./app/cart/routes')
+const orderRoute = require ('./app/order/routes')
+const invoiceRoute = require ('./app/invoice/routes')
+
 
 
 var app = express();
@@ -30,6 +35,10 @@ app.use('/auth', authRoute)
 app.use('/api', productRoute)
 app.use('/api', categoryRoute)
 app.use('/api', tagsRoute)
+app.use('/api', delveryAddressRoute)
+app.use('/api', cartRoute)
+app.use('/api', orderRoute)
+app.use('/api', invoiceRoute)
 
 
 //home
