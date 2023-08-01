@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const deliveryaddressController = require('./controller')
+const {police_check} = require('../../middleware')
 
 
 router.post('/delivery-addresses',police_check('create', 'DeliveryAddress'),deliveryaddressController.store)

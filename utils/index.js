@@ -1,5 +1,6 @@
 const { Ability, AbilityBuilder } = require("@casl/ability")
 
+
 function getToken(req) {
     let token = 
     req.headers.authorization
@@ -10,7 +11,7 @@ function getToken(req) {
 
 const policies = {
     guest(user,{can}){
-        can('read', Product)
+        can('read')
     },
     user(user, {can}) {
         can('view', 'Order')
