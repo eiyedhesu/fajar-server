@@ -29,10 +29,10 @@ const localStrategy = async (email, password, done) => {
     try{
         const user = await User
         .findOne({email})
-        .select('-__v -createdAt updatedAt -cart_items -token')
+        .select('-__v -token -createdAt -updatedAt -cart_items')
     if(!user) return done()
     if(bcrypt.compareSync(password, user.password)){
-        ({password, ...userWithoutPassword} = user.toJson())
+        ({password, ...userWithoutPassword} = user.toJSON())
         return done(null, userWithoutPassword)
     }
     }catch(err){
@@ -46,8 +46,9 @@ const login = async (req, res , next) =>{
         if(err) return next(err)
         if(!user) return res.json({error: 1, message: 'Email or Password incorect'})
         let signed = jwt.sign(user, config.secretkey)
-        await User.findByIDAndUpdate(user._id,{$push: {token: signed}})
-        res.json({
+        await User.findByIdAndUpdate(user._id,{$push: {token: signed}})
+        
+        return res.json({
             message: 'Login Succesfully',
             user,
             token: signed
@@ -60,7 +61,7 @@ const logout = async(req, res, next) => {
     let user = await user.findOneAndUpdate({token:{$in:[token]}}, {$pull: {token: token}}, {useFindAndModify: false})
 
     if(!token || !user){
-        res.json({
+        return res.json({
             error: 1,
             message: 'No User Found'
         })
@@ -72,12 +73,13 @@ const logout = async(req, res, next) => {
 }
 
 const me = (req, res, next) => {
+    
     if(!req.user){
-        res.json({
+        return res.json({
             err: 1,
-            message: `you're not login or goken expired`
+            message: `you're not login or token expired`
         })
-    }
+    } return res.json (req.user)
 }
 
 module.exports = {

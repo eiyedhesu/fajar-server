@@ -33,7 +33,7 @@ const store = async (req, res, next) => {
 
         if(req.file){
             let tmp_path = req.file.path
-            let originalExt = req.file.originalname.split('.')[req.file.originalname.split('png').length -1]
+            let originalExt = req.file.originalname.split('.')[req.file.originalname.split('jpg').length -1]
             let filename = req.file.filename + '.' + originalExt
             let target_path = path.resolve(config.rootPatch,`public/images/products/${filename}`)
 

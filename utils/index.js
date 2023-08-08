@@ -4,14 +4,14 @@ const { Ability, AbilityBuilder } = require("@casl/ability")
 function getToken(req) {
     let token = 
     req.headers.authorization
-    ? req.headers.authorization.replace('Bearer', '')
+    ? req.headers.authorization.replace('Bearer ','')
     : null
     return token && token.length ?token : null
 }
 
 const policies = {
     guest(user,{can}){
-        can('read')
+        can('read', "Product")
     },
     user(user, {can}) {
         can('view', 'Order')
