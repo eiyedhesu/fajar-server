@@ -78,7 +78,7 @@ const index = async(req, res, next) => {
      let {skip = 0, limit = 10} = req.query
      let count = await DeliveryAddress.find({user: req.user._id}).countDocuments()
         let address = await DeliveryAddress
-        .find({user: req.user_id})
+        .find({user: req.user._id})
         .skip(parseInt(skip))
         .limit(parseInt(limit))
         .sort('-createdAt')
