@@ -4,7 +4,7 @@ const CartItem = require('../cart.item/model')
 const update = async(req, res, next) => {
     try {
     const {items} = req.body
-    const productIds = items.map(item => item.product.id)
+    const productIds = items.map(item => item.product._id)
     const products = await Product.find({_id: {$in : productIds}})
     let cartItems = items.map(item => {
         let relatedProduct = products.find(product => product._id.toString() === item.product._id)
@@ -22,7 +22,7 @@ const update = async(req, res, next) => {
         return{
             updateOne: {
                 filter: {
-                    iser: req.user._id,
+                    user: req.user._id,
                     product: item.product
                 },
                 update: item,

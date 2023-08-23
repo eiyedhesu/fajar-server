@@ -227,12 +227,21 @@ const destroy = async (req, res, next) => {
         next(err)
     }
 }
+const getProductsById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        return res.json(product);
+    } catch (error) {
+        return res.status(404).json({ message: error.message });
+    }
+}
 
 module.exports = {
     store,
     index,
     update,
-    destroy
+    destroy,
+    getProductsById
 }
 
 

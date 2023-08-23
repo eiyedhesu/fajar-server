@@ -28,7 +28,7 @@ const store = async(req, res, next) => {
             },
             user: req.user._id
         })
-        let orderItems = await orderItem.insertMany(items.map(item=> ({
+        let orderItems = await orderItems.insertMany(items.map(item=> ({
             ...item,
             name: item.product.name,
             qty: parseInt(item.qty),
@@ -55,7 +55,7 @@ const store = async(req, res, next) => {
 const index = async(req, res, next) => {
     try{
         let {skip = 0, limit = 10} = req.query
-        let count = await Order.find({user: req.user._id}).countDocument()
+        let count = await Order.find({user: req.user._id}).countDocuments()
         let orders = 
             await Order
             .find({user: req.user._id})
@@ -68,7 +68,7 @@ const index = async(req, res, next) => {
             count
         })
     }catch (error){
-        if(error && error.name == ' ValidationError '){
+        if(error && error.name == 'ValidationError'){
             return res.json({
                 error: 1,
                 message: error.mesage,

@@ -7,6 +7,7 @@ const productController = require ('./controller')
 const { police_check } = require('../../middleware')
 
 router.get('/products', productController.index)
+router.get('/products/:id', productController.getProductsById)
 router.post('/products', multer({dest: "public/images/products"}).single('image'), police_check('create', 'Product') ,productController.store)
 router.put('/products/:id', multer({dest: "public/images/products"}).single('image'), police_check('update', 'Product') ,productController.update)
 router.delete('/products/:id', police_check('delete', 'Product') ,productController.destroy)

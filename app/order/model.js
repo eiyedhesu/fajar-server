@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const { model, Schema } = mongoose
-const AutoIncrement = require('mongoose-sequence')(mongoose)
 const Invoice = require('../invoice/model')
 
 const orderSchema = Schema({
@@ -28,7 +27,7 @@ const orderSchema = Schema({
     order_items: [{type: Schema.Types.ObjectId, ref: 'OrderItem'}]
 }, {timestamps: true})
 
-orderSchema.plugin(AutoIncrement, {inc_field: 'order_number'})
+
 orderSchema.virtual('items_count').get(function(){
     return this.order_items.reduce((total, item)=> total + parseInt(item.qty),0)
 })
@@ -38,10 +37,11 @@ orderSchema.post('save', async function(){
         user: this.user,
         order: this._id,
         sub_total: sub_total,
+        total: total,
         delivery_fee: parseInt(this.delivery_fee),
         delivery_address: this.delivery_address
     })
     await invoice.save()
 })
 
-module.exports = model('order', orderSchema)
+module.exports = model('Order', orderSchema)
