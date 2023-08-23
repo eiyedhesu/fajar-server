@@ -4,7 +4,7 @@ const path = require ('path')
 dotenv.config()
 
 module.exports= {
-    rootPatch: path.resolve('http://localhost:8000', '..'),
+    rootPatch: path.resolve('__dirname', '..'),
     secretkey: process.env.SECRET_KEY,
     serviceName: process.env.SERVICE_NAME,
     dbHost: process.env.DB_HOST,
