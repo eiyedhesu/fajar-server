@@ -35,7 +35,8 @@ const store = async (req, res, next) => {
             let tmp_path = req.file.path
             let originalExt = req.file.originalname.split('.')[req.file.originalname.split('.').length -1]
             let filename = req.file.filename + '.' + originalExt
-            let target_path = path.resolve(config.rootPatch,`public/images/products/${filename}`)
+            // let target_path = path.resolve`/public/images/products/${filename}`
+            let target_path = path.resolve(config.rootPath,`/public/images/products/${filename}`)
             
             const src = fs.createReadStream(tmp_path)
             const dest = fs.createWriteStream(target_path)
@@ -68,6 +69,7 @@ const store = async (req, res, next) => {
             let product = await new Product(payload)
             await product.save()
             return res.json(product)
+        
         }
     }catch (err) {
         if(err && err.name === 'ValidationError'){
@@ -84,7 +86,6 @@ const store = async (req, res, next) => {
 
 
 const index = async (req, res, next) => {
-    console.log("ke index")
     try {
         let{ skip= 0, limit = 10, q = '', category = '', tags = [] } = req.query
         
@@ -157,8 +158,8 @@ const update = async (req, res, next) => {
             let tmp_path = req.file.path
             let originalExt = req.file.origilanname.split('.')[req.file.original.split('.').length -1]
             let filename = req.file.filename + '.' + originalExt
-            let target_path = path.resolve(config.rootPatch,`public/images/products/${filename}`)
-
+            // let target_path = path.resolve(config.rootPatch,`public/images/products/${filename}`)
+            let target_path = path.resolve(config.rootPath,`/public/images/products/${filename}`)
             const src = fs.createReadStream(tmp_path)
             const dest = fs.createWriteStream(target_path)
             src.pipe(dest)
@@ -166,7 +167,7 @@ const update = async (req, res, next) => {
             src.on('end', async () => {
                 try {
                     let product = await Product.findById(id)
-                    let currentImage = `${config.rootPatch}/public/images/products/${product.image_url}`
+                    let currentImage = `${config.rootPath}/public/images/products/${product.image_url}`
                     
                     if(fs.existsSync(currentImage)){
                         fs.unlinkSync(currentImage)
@@ -217,7 +218,7 @@ const update = async (req, res, next) => {
 const destroy = async (req, res, next) => {
     try{
         let product = await Product.findByIdAndDelete(req.params.id)
-        let currentImage = `${config.rootPatch}/public/images/products/${product.image_url}`
+        let currentImage = `${config.rootPath}/public/images/products/${product.image_url}`
 
         if(fs.existsSync(currentImage)){
             fs.unlinkSync(currentImage)
