@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const { Schema, model,  } = mongoose
-const AutoIncrement = require('mongoose-sequence')(mongoose)
+
 const bcrypt = require('bcrypt');
 
 
@@ -42,6 +42,16 @@ let userSchema = Schema ({
 
 }, { timestamps: true})
 
+userSchema.methods.removeToken = async function (token) {
+    try {
+      this.token = this.token.filter(t => t !== token);
+      await this.save(); 
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+
  userSchema.path('email').validate(function (value) {
     var EMAIL_RE = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
     console.log(value)
@@ -69,6 +79,6 @@ userSchema.pre('save', function(next){
     next()
  })
 
-userSchema.plugin(AutoIncrement, {inc_field: 'customer_id',disable_hooks: true})
+
 
 module.exports = model ('User', userSchema)

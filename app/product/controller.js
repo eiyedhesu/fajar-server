@@ -3,15 +3,18 @@ const fs = require('fs')
 const config = require('../config')
 const Product = require ('./model')
 const Category = require ('../category/model')
+const Tag = require ('../tags/model')
 
 const store = async (req, res, next) => {
     console.log(req.body)
-    console.log("name")
     console.log(req.file)
+    
 
     try{
         let payload = req.body
-        if(payload.category) {
+        console.log(req.body);
+        console.log('req.body');
+        if (payload.category) {
             let category = await Category
             .findOne({name : {$regex: payload.category, $options: 'i'}})
             if(category){
@@ -21,7 +24,7 @@ const store = async (req, res, next) => {
             }
         }
         
-        if(payload.tags && payload.length > 0) {
+        if(payload.tags && payload.length > 0)  {
             let tags = await Tag
             .findOne({name : {$in : payload.tags} })
             if(tags.length){
@@ -35,8 +38,7 @@ const store = async (req, res, next) => {
             let tmp_path = req.file.path
             let originalExt = req.file.originalname.split('.')[req.file.originalname.split('.').length -1]
             let filename = req.file.filename + '.' + originalExt
-            // let target_path = path.resolve`/public/images/products/${filename}`
-            let target_path = path.resolve(config.rootPath,`/public/images/products/${filename}`)
+            let target_path = path.join(__dirname, 'public', 'images', 'products', filename)
             
             const src = fs.createReadStream(tmp_path)
             const dest = fs.createWriteStream(target_path)
@@ -61,9 +63,9 @@ const store = async (req, res, next) => {
                 }
             })
         
-            src.on('error', async() => {
-                next(err)
-            })
+            src.on('error', async (err) => {
+                next(err);
+            });
 
         }else {
             let product = await new Product(payload)
@@ -147,7 +149,7 @@ const update = async (req, res, next) => {
         if(payload.tags && payload.tags.length > 0) {
             let tags = await Tag
             .find({name : {$in : payload.tags} })
-            if(tags.length){
+            if(tags && tags.length > 0){
                 payload = {...payload, tags: tags.map(tag => tag._id)}
             } else {
                 delete payload.tags
@@ -158,8 +160,7 @@ const update = async (req, res, next) => {
             let tmp_path = req.file.path
             let originalExt = req.file.origilanname.split('.')[req.file.original.split('.').length -1]
             let filename = req.file.filename + '.' + originalExt
-            // let target_path = path.resolve(config.rootPatch,`public/images/products/${filename}`)
-            let target_path = path.resolve(config.rootPath,`/public/images/products/${filename}`)
+            let target_path = path.join(__dirname, 'public', 'images', 'products', filename)
             const src = fs.createReadStream(tmp_path)
             const dest = fs.createWriteStream(target_path)
             src.pipe(dest)
@@ -177,7 +178,8 @@ const update = async (req, res, next) => {
                         new: true,
                         runValidators: true
                     })
-                    return res.json(product)
+                    const imageUrl = `http://localhost:8000/images/products/${filename}`;
+                    return res.json({ ...product._doc, image_url: imageUrl });
 
                 } catch(err){
                     fs.unlinkSync(target_path)
@@ -219,7 +221,6 @@ const destroy = async (req, res, next) => {
     try{
         let product = await Product.findByIdAndDelete(req.params.id)
         let currentImage = `${config.rootPath}/public/images/products/${product.image_url}`
-
         if(fs.existsSync(currentImage)){
             fs.unlinkSync(currentImage)
         }

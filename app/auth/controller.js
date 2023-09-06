@@ -10,11 +10,13 @@ const register = async(req, res, next) => {
     try{
         const payload = req.body
         let user = new User(payload)
+        console.log(user);
+        console.log("user");
         await user.save()
         return res.json(user)
     }catch(err){
-        // console.log('err');
-        // console.log(err.name);
+        console.log('err');
+        console.log(err);
         if(err && err.name === 'ValidationError')
         return res.json({
             error: 1,
@@ -58,7 +60,11 @@ const login = async (req, res , next) =>{
 
 const logout = async(req, res, next) => {
     let token = getToken(req)
-    let user = await user.findOneAndUpdate({token:{$in:[token]}}, {$pull: {token: token}}, {useFindAndModify: false})
+    let user = await User.findOneAndUpdate(
+        { token: { $in: [token] } },
+        { $pull: { token: token } },
+        { useFindAndModify: false }
+      );
 
     if(!token || !user){
         return res.json({
