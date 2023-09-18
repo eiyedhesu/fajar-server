@@ -3,7 +3,6 @@ const categoryController = require('./controller')
 const { police_check } = require('../../middleware')
 
 router.get('/categories', categoryController.index)
-router.get('/categories/:id',police_check('update', 'Category') ,categoryController.update)
 router.post('/categories', police_check('create', 'Category'),categoryController.store)
 router.put('/categories/:id',police_check('update', 'Category') ,categoryController.update)
 router.delete('/categories/:id',police_check('delete', 'Category') ,categoryController.destroy)

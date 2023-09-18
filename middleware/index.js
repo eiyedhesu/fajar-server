@@ -29,8 +29,11 @@ function decodeToken() {
 }
 
 function police_check (action, subject) {
+   
     return function(req, res, next) {
+       
         let policy = policyFor(req.user)
+        
         if(!policy.can(action, subject)) {
             return res.json({
                 error: 1,

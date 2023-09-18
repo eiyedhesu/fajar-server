@@ -4,6 +4,7 @@ const passport = require('passport')
 const jwt = require('jsonwebtoken')
 const config = require('../config')
 const {getToken} = require('../../utils/index')
+const ShippingAddress = require('../address/model');
 
 const register = async(req, res, next) => {
    console.log(req.body)
@@ -88,10 +89,72 @@ const me = (req, res, next) => {
     } return res.json (req.user)
 }
 
+const addShippingAddress = async (req, res, next) => {
+    
+    const { provinsi, kabupaten, kecamatan, kelurahan, detail } = req.body;
+    console.log(req.body);
+    console.log('add address');
+    try {
+     
+      const newShippingAddress = new ShippingAddress({
+        provinsi,
+        kabupaten,
+        kecamatan,
+        kelurahan,
+        detail,
+      });
+  
+      
+      await newShippingAddress.save();
+  
+      
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+          $set: {
+            shipping_address: newShippingAddress._id,
+          },
+        },
+        { new: true }
+        
+        );
+        console.log(req.user);
+        console.log('user');
+      if (!user) {
+        return res.json({ error: 1, message: 'User not found' });
+      }
+  
+      return res.json({ success: true, user });
+    } catch (error) {
+      console.log(error);
+        next(error);
+    }
+  };
+  
+
+const getShippingAddress = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({ error: 1, message: 'User not found' });
+        }
+
+        const shippingAddress = user.shipping_address;
+
+        return res.json({ success: true, shippingAddress });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     register,
     localStrategy,
     login,
     logout,
-    me
+    me,
+    addShippingAddress,
+    getShippingAddress
+
 }

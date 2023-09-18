@@ -13,7 +13,7 @@ const delveryAddressRoute = require ('./app/deliveryAdress/routes')
 const cartRoute = require ('./app/cart/routes')
 const orderRoute = require ('./app/order/routes')
 const invoiceRoute = require ('./app/invoice/routes')
-
+const bodyParser = require('express')
 
 
 var app = express();
@@ -25,11 +25,14 @@ app.set('view engine', 'pug');
 
 app.use(cors())
 app.use(logger('dev'));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/images/products', express.static(path.join(__dirname, 'public/images/products')));
+app.use('/images', express.static('public'));
 app.use(decodeToken())
+
 
 app.use('/auth', authRoute)
 app.use('/api', productRoute)

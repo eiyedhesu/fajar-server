@@ -14,7 +14,6 @@ const cartItemSchema = Schema ({
         type: Number,
         default: 0
     },
-    
     image_url: String,
     
     user: {

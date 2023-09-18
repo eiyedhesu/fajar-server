@@ -5,6 +5,7 @@ const store = async(req, res, next) => {
     try{
         let payload = req.body
         let category = new Categories(payload)
+       
         await category.save()
         return res.json(category)
     }catch(err){

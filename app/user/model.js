@@ -17,7 +17,6 @@ let userSchema = Schema ({
         type: Number,
     },
 
-
     email: {
         type: String,
         required: [true, 'Email harus diisi'],
@@ -38,7 +37,14 @@ let userSchema = Schema ({
         
     },
 
-    token: [String]
+    token: [String],
+
+    shipping_address: {
+        type: Schema.Types.ObjectId,
+        ref: 'ShippingAddress',
+   
+    }
+   
 
 }, { timestamps: true})
 

@@ -3,6 +3,8 @@ const DeliveryAddress = require ('./model')
 const { policyFor } = require('../../utils')
 
 const store = async (req, res, next) => {
+    console.log(req.body);
+    console.log('req.body');
     try{
         let payload = req.body
         let user = req.user

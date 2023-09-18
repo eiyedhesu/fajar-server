@@ -18,15 +18,22 @@ const productSchema = Schema({
         default: 0
     },
 
-    image_url: String,
+    image_url:{
+        type: String
+    },
+
+    photo:{
+        data: Buffer,
+        contentType: String
+    },
 
     category: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category'
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
     },
 
     tags: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.ObjectId,
         ref: 'tag'
         }
     
