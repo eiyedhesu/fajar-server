@@ -109,7 +109,7 @@ const store = async (req, res, next) => {
 
 const index = async (req, res, next) => {
     try {
-      let { skip = 0, limit = 21, q = '', category = '', tags = [] } = req.query;
+      let { skip = 0, limit = 100, q = '', category = '', tags = [] } = req.query;
   
       let criteria = {};
   
