@@ -1,23 +1,23 @@
 const CartItem = require('../cart.item/model')
-const DeliveryAddress= require('../deliveryAdress/model')
+const DeliveryAddress = require('../deliveryAdress/model')
 const Order = require('../order/model')
-const {Types} = require('mongoose')
-const Orderitem = require ('../order-item/model')
+const { Types } = require('mongoose')
+const Orderitem = require('../order-item/model')
 
-const store = async(req, res, next) => {
-  
-    try{
+const store = async (req, res, next) => {
+
+    try {
         // let {delivery_fee, delivery_adress} = req.body
         let delivery_fee = req.body.deliveryFee
         let delivery_adress = req.body.delivery_adress
-        let items = await CartItem.find({user: req.user._id}).populate('product')
+        let items = await CartItem.find({ user: req.user._id }).populate('product')
         console.log(items)
         console.log('items')
         console.log(req.body)
         console.log('body');
         console.log(delivery_fee);
         console.log('delivery_fee')
-        if(!items){
+        if (!items) {
             return res.json({
                 error: 1,
                 message: `You're not create order because you have not items in cart`
@@ -38,10 +38,10 @@ const store = async(req, res, next) => {
                 detail: address.detail
             },
             user: req.user._id
-        }) 
+        })
         console.log(order);
         console.log('order');
-        let orderItems = await Orderitem.insertMany(items.map(item=> ({
+        let orderItems = await Orderitem.insertMany(items.map(item => ({
             ...item,
             name: item.product.name,
             qty: parseInt(item.qty),
@@ -49,15 +49,15 @@ const store = async(req, res, next) => {
             order: order._id,
             product: item.product._id
         })))
-        orderItems.forEach(item=> order.order_items.push(item))
+        orderItems.forEach(item => order.order_items.push(item))
         order.save()
-        await CartItem.deleteMany({user: req.user._id})
+        await CartItem.deleteMany({ user: req.user._id })
         return res.json({ order_id: order._id });
-    } catch (error){
+    } catch (error) {
         console.log(error);
         console.log('error');
-        if(error && error.name == 'ValidationError'){
-            return res.json ({
+        if (error && error.name == 'ValidationError') {
+            return res.json({
                 error: 1,
                 message: error.message,
                 fields: error.errors
@@ -67,31 +67,31 @@ const store = async(req, res, next) => {
     }
 }
 
-const index = async(req, res, next) => {
-    try{
-        let {skip = 0, limit = 10} = req.query
-        let count = await Order.find({user: req.user._id}).countDocuments()
-        let orders = 
+const index = async (req, res, next) => {
+    try {
+        let { skip = 0, limit = 10 } = req.query
+        let count = await Order.find({ user: req.user._id }).countDocuments()
+        let orders =
             await Order
-            .find({user: req.user._id})
-            .skip(parseInt(skip))
-            .limit(parseInt(limit))
-            .populate('order_items')
-            .sort('-createdAt')
+                .find({ user: req.user._id })
+                .skip(parseInt(skip))
+                .limit(parseInt(limit))
+                .populate('order_items')
+                .sort('-createdAt')
         // return res.json({
         //     data: orders.map(order => order.toJson({virtuals: true})),
         //     count
         // })
         const ordersJSON = orders.map((order) => order.toJSON());
 
-    return res.json({
-      data: ordersJSON,
-      count
-    });
-    }catch (error){
-                console.log(error);
-                console.log('error get');
-        if(error && error.name == 'ValidationError'){
+        return res.json({
+            data: ordersJSON,
+            count
+        });
+    } catch (error) {
+        console.log(error);
+        console.log('error get');
+        if (error && error.name == 'ValidationError') {
             return res.json({
                 error: 1,
                 message: error.message,
